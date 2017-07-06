@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.java_websocket.WebSocket;
@@ -269,7 +270,7 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
 //                Log.d(Util.T, "Found requests need to handle response");
                 if (payload != null) {
                     Util.postSuccess(request.getResponseListener(), payload);
-                } 
+                }
                 else {
                     Util.postError(request.getResponseListener(), new ServiceCommandError(-1, "JSON parse error", null));
                 }
@@ -325,7 +326,7 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
                 if (request != null) {
                     Util.postError(request.getResponseListener(), new ServiceCommandError(errorCode, errorDesc, payload));
 
-                    if (!(request instanceof URLServiceSubscription)) 
+                    if (!(request instanceof URLServiceSubscription))
                         requests.remove(id);
 
                 }
@@ -381,7 +382,7 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
         @SuppressWarnings("deprecation")
         int height = display.getHeight(); // deprecated, but still needed for supporting API levels 10-12
 
-        String screenResolution = String.format("%dx%d", width, height); 
+        String screenResolution = String.format("%dx%d", width, height);
 
         // app Name
         ApplicationInfo applicationInfo;
@@ -430,7 +431,7 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
             @Override
             public void onError(ServiceCommandError error) {
                 state = State.INITIAL;
-                
+
                 if (mListener != null)
                     mListener.onRegistrationFailed(error);
             }
@@ -517,7 +518,7 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
             @Override
             public void onError(ServiceCommandError error) {
                 state = State.INITIAL;
-                
+
                 if (mListener != null)
                     mListener.onFailWithError(error);
             }
@@ -525,29 +526,29 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
             @Override
             public void onSuccess(Object object) { }
         };
-        
+
         String uri = "ssap://pairing/setPin";
 
         int dataId = this.nextRequestId++;
-        
+
         ServiceCommand<ResponseListener<Object>> command = new ServiceCommand<ResponseListener<Object>>(this, null, null, listener);
         command.setRequestId(dataId);
-        
+
         JSONObject headers = new JSONObject();
         JSONObject payload = new JSONObject();
-        
+
         try {
             headers.put("type", "request");
             headers.put("id", dataId);
             headers.put("uri", uri);
-            
+
             payload.put("pin", pairingKey);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         requests.put(dataId, command);
-        
+
         sendMessage(headers, payload);
     }
 
@@ -570,9 +571,9 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
 //        ConnectableDevice storedDevice = connectableDeviceStore.getDevice(mService.getServiceConfig().getServiceUUID());
 //        if (storedDevice == null) {
 //            storedDevice = new ConnectableDevice(
-//                    mService.getServiceDescription().getIpAddress(), 
-//                    mService.getServiceDescription().getFriendlyName(), 
-//                    mService.getServiceDescription().getModelName(), 
+//                    mService.getServiceDescription().getIpAddress(),
+//                    mService.getServiceDescription().getFriendlyName(),
+//                    mService.getServiceDescription().getModelName(),
 //                    mService.getServiceDescription().getModelNumber());
 //        }
 //        storedDevice.addService(WebOSTVService.this);
@@ -657,7 +658,7 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
             }
 
             this.sendMessage(headers, null);
-        } 
+        }
         else if (payloadType.equals("hello")) {
             this.send(payload.toString());
         }
@@ -684,8 +685,7 @@ public class WebOSTVServiceSocketClient extends WebSocketClient implements Servi
     protected void setupSSL() {
         try {
             SSLContext sslContext = SSLContext.getInstance("TLS");
-            customTrustManager = new TrustManager();
-            sslContext.init(null, new TrustManager [] {customTrustManager}, null);
+            sslContext.init(null, new TrustManager[] {customTrustManager}, null);
             setSSLContext(sslContext);
 
             if (!(mService.getServiceConfig() instanceof WebOSTVServiceConfig)) {

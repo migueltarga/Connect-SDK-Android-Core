@@ -22,12 +22,17 @@ package com.connectsdk.service.webos;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.KeyException;
+import java.security.NoSuchAlgorithmException;
 
 import org.java_websocket.WebSocket.READYSTATE;
+import org.java_websocket.client.DefaultSSLWebSocketClientFactory;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import android.util.Log;
+
+import javax.net.ssl.SSLContext;
 
 public class WebOSTVMouseSocketConnection {
     public interface WebOSTVMouseSocketListener {
